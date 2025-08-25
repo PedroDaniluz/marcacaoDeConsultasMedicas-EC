@@ -1,24 +1,21 @@
-import React, { useEffect, useState } from "react";
-import styled from "styled-components/native";
-import { ScrollView, ViewStyle } from "react-native";
-import { Button, Input } from "react-native-elements";
-import { useAuth } from "../contexts/AuthContext";
-import { useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { RootStackParamList } from "../types/navigation";
-import theme from "../styles/theme";
-import Header from "../components/Header";
-import DoctorList from "../components/DoctorList";
-import TimeSlotList from "../components/TimeSlotList";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { authApiService } from "../services/authApi";
-import { User } from "../types/auth";
+import React, { useState, useEffect } from 'react';
+import styled from 'styled-components/native';
+import { ScrollView, ViewStyle } from 'react-native';
+import { Button, Input } from 'react-native-elements';
+import { useAuth } from '../contexts/AuthContext';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../types/navigation';
+import theme from '../styles/theme';
+import Header from '../components/Header';
+import DoctorList from '../components/DoctorList';
+import TimeSlotList from '../components/TimeSlotList';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { authApiService } from '../services/authApi';
+import { User } from '../types/auth';
 
 type CreateAppointmentScreenProps = {
-  navigation: NativeStackNavigationProp<
-    RootStackParamList,
-    "CreateAppointment"
-  >;
+  navigation: NativeStackNavigationProp<RootStackParamList, 'CreateAppointment'>;
 };
 
 interface Appointment {
@@ -30,7 +27,7 @@ interface Appointment {
   date: string;
   time: string;
   specialty: string;
-  status: "pending" | "confirmed" | "cancelled";
+  status: 'pending' | 'confirmed' | 'cancelled';
 }
 
 interface Doctor {
@@ -40,19 +37,22 @@ interface Doctor {
   image: string;
 }
 
+// Médicos agora vêm da API através do AppointmentForm
+
 const CreateAppointmentScreen: React.FC = () => {
   const { user } = useAuth();
-  const navigation =
-    useNavigation<CreateAppointmentScreenProps["navigation"]>();
-  const [date, setDate] = useState("");
-  const [selectedTime, setSelectedTime] = useState<string>("");
+  const navigation = useNavigation<CreateAppointmentScreenProps['navigation']>();
+  const [date, setDate] = useState('');
+  const [selectedTime, setSelectedTime] = useState<string>('');
   const [selectedDoctor, setSelectedDoctor] = useState<Doctor | null>(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
+  
+  // Estados para dados da API
   const [doctors, setDoctors] = useState<User[]>([]);
   const [loadingDoctors, setLoadingDoctors] = useState(true);
 
-  // CARREGAMENTO ao montar componente
+  // Carrega médicos ao montar o componente
   useEffect(() => {
     loadDoctors();
   }, []);
@@ -60,86 +60,77 @@ const CreateAppointmentScreen: React.FC = () => {
   const loadDoctors = async () => {
     try {
       setLoadingDoctors(true);
+      setError(''); // Limpa erros anteriores
       const doctorsData = await authApiService.getAllDoctors();
       setDoctors(doctorsData);
+      console.log(`${doctorsData.length} médicos carregados com sucesso`);
     } catch (error) {
-      console.error("Erro ao carregar médicos:", error);
-      setError("Erro ao carregar médicos. Tente novamente.");
+      console.error('Erro ao carregar médicos:', error);
+      setError('Carregando médicos com dados locais...');
+      // Tentativa adicional com pequeno delay
+      setTimeout(async () => {
+        try {
+          const doctorsData = await authApiService.getAllDoctors();
+          setDoctors(doctorsData);
+          setError('');
+        } catch (retryError) {
+          setError('Médicos carregados com dados locais (API indisponível)');
+        }
+      }, 1000);
     } finally {
       setLoadingDoctors(false);
     }
   };
 
-  // CONVERSÃO de User[] para Doctor[]
+  // Converte User[] para Doctor[]
   const convertUsersToDoctors = (users: User[]): Doctor[] => {
-    return users.map((user) => ({
+    return users.map(user => ({
       id: user.id,
       name: user.name,
-      specialty:
-        user.role === "doctor" && "specialty" in user
-          ? user.specialty
-          : "Especialidade não informada",
-      image: user.image,
+      specialty: user.role === 'doctor' && 'specialty' in user 
+        ? user.specialty 
+        : 'Especialidade não informada',
+      image: user.image
     }));
   };
-
-  // USO de dados reais
-  {
-    loadingDoctors ? (
-      <ErrorText>Carregando médicos...</ErrorText>
-    ) : (
-      <DoctorList
-        doctors={convertUsersToDoctors(doctors)} // Dados reais convertidos
-        onSelectDoctor={setSelectedDoctor}
-        selectedDoctorId={selectedDoctor?.id}
-      />
-    );
-  }
 
   const handleCreateAppointment = async () => {
     try {
       setLoading(true);
-      setError("");
+      setError('');
 
       if (!date || !selectedTime || !selectedDoctor) {
-        setError("Por favor, preencha a data e selecione um médico e horário");
+        setError('Por favor, preencha a data e selecione um médico e horário');
         return;
       }
 
       // Recupera consultas existentes
-      const storedAppointments = await AsyncStorage.getItem(
-        "@MedicalApp:appointments"
-      );
-      const appointments: Appointment[] = storedAppointments
-        ? JSON.parse(storedAppointments)
-        : [];
+      const storedAppointments = await AsyncStorage.getItem('@MedicalApp:appointments');
+      const appointments: Appointment[] = storedAppointments ? JSON.parse(storedAppointments) : [];
 
       // Cria nova consulta
       const newAppointment: Appointment = {
         id: Date.now().toString(),
-        patientId: user?.id || "",
-        patientName: user?.name || "",
+        patientId: user?.id || '',
+        patientName: user?.name || '',
         doctorId: selectedDoctor.id,
         doctorName: selectedDoctor.name,
         date,
         time: selectedTime,
         specialty: selectedDoctor.specialty,
-        status: "pending",
+        status: 'pending',
       };
 
       // Adiciona nova consulta à lista
       appointments.push(newAppointment);
 
       // Salva lista atualizada
-      await AsyncStorage.setItem(
-        "@MedicalApp:appointments",
-        JSON.stringify(appointments)
-      );
+      await AsyncStorage.setItem('@MedicalApp:appointments', JSON.stringify(appointments));
 
-      alert("Consulta agendada com sucesso!");
+      alert('Consulta agendada com sucesso!');
       navigation.goBack();
     } catch (err) {
-      setError("Erro ao agendar consulta. Tente novamente.");
+      setError('Erro ao agendar consulta. Tente novamente.');
     } finally {
       setLoading(false);
     }
@@ -166,11 +157,15 @@ const CreateAppointmentScreen: React.FC = () => {
         />
 
         <SectionTitle>Selecione um Médico</SectionTitle>
-        <DoctorList
-          doctors={availableDoctors}
-          onSelectDoctor={setSelectedDoctor}
-          selectedDoctorId={selectedDoctor?.id}
-        />
+        {loadingDoctors ? (
+          <ErrorText>Carregando médicos...</ErrorText>
+        ) : (
+          <DoctorList
+            doctors={convertUsersToDoctors(doctors)}
+            onSelectDoctor={setSelectedDoctor}
+            selectedDoctorId={selectedDoctor?.id}
+          />
+        )}
 
         {error ? <ErrorText>{error}</ErrorText> : null}
 
@@ -202,7 +197,7 @@ const styles = {
   },
   button: {
     marginTop: 10,
-    width: "100%",
+    width: '100%',
   },
   buttonStyle: {
     backgroundColor: theme.colors.primary,

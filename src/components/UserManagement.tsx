@@ -1,16 +1,13 @@
-import React, { useState, useEffect } from "react";
-import styled from "styled-components/native";
-import { ViewStyle, TextStyle, Alert } from "react-native";
-import { Button, Input, Text } from "react-native-elements";
-import {
-  adminApiService,
-  AdminUser,
-  ChangePasswordData,
-} from "../services/adminApi";
-import theme from "../styles/theme";
+import React, { useState, useEffect } from 'react';
+import styled from 'styled-components/native';
+import { ViewStyle, TextStyle, Alert } from 'react-native';
+import { Button, Input, Text } from 'react-native-elements';
+import { adminApiService, AdminUser, ChangePasswordData } from '../services/adminApi';
+import theme from '../styles/theme';
 
 interface UserManagementProps {
   style?: ViewStyle;
+  onSignOut?: () => void;
 }
 
 interface StyledProps {
@@ -19,11 +16,11 @@ interface StyledProps {
 
 const getRoleColor = (role: string) => {
   switch (role) {
-    case "admin":
+    case 'admin':
       return theme.colors.error;
-    case "doctor":
+    case 'doctor':
       return theme.colors.primary;
-    case "patient":
+    case 'patient':
       return theme.colors.success;
     default:
       return theme.colors.secondary;
@@ -32,22 +29,22 @@ const getRoleColor = (role: string) => {
 
 const getRoleText = (role: string) => {
   switch (role) {
-    case "admin":
-      return "Administrador";
-    case "doctor":
-      return "Médico";
-    case "patient":
-      return "Paciente";
+    case 'admin':
+      return 'Administrador';
+    case 'doctor':
+      return 'Médico';
+    case 'patient':
+      return 'Paciente';
     default:
       return role;
   }
 };
 
-const UserManagement: React.FC<UserManagementProps> = ({ style }) => {
+const UserManagement: React.FC<UserManagementProps> = ({ style, onSignOut }) => {
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [changingPassword, setChangingPassword] = useState<string | null>(null);
-  const [newPassword, setNewPassword] = useState("");
+  const [newPassword, setNewPassword] = useState('');
 
   useEffect(() => {
     loadUsers();
@@ -59,7 +56,8 @@ const UserManagement: React.FC<UserManagementProps> = ({ style }) => {
       const usersData = await adminApiService.getAllUsers();
       setUsers(usersData);
     } catch (error) {
-      Alert.alert("Erro", "Não foi possível carregar os usuários");
+      console.error('Erro ao carregar usuários:', error);
+      Alert.alert('Erro', 'Não foi possível carregar os usuários');
     } finally {
       setLoading(false);
     }
@@ -67,23 +65,23 @@ const UserManagement: React.FC<UserManagementProps> = ({ style }) => {
 
   const handleChangePassword = async (userId: string) => {
     if (!newPassword || newPassword.trim().length < 6) {
-      Alert.alert("Erro", "A senha deve ter pelo menos 6 caracteres");
+      Alert.alert('Erro', 'A senha deve ter pelo menos 6 caracteres');
       return;
     }
 
     try {
       const changeData: ChangePasswordData = {
         userId,
-        newPassword: newPassword.trim(),
+        newPassword: newPassword.trim()
       };
 
       await adminApiService.changeUserPassword(changeData);
-
-      Alert.alert("Sucesso", "Senha alterada com sucesso!");
+      
+      Alert.alert('Sucesso', 'Senha alterada com sucesso!');
       setChangingPassword(null);
-      setNewPassword("");
+      setNewPassword('');
     } catch (error) {
-      Alert.alert("Erro", "Não foi possível alterar a senha");
+      Alert.alert('Erro', 'Não foi possível alterar a senha');
     }
   };
 
@@ -97,7 +95,7 @@ const UserManagement: React.FC<UserManagementProps> = ({ style }) => {
           {user.specialty && ` - ${user.specialty}`}
         </UserRole>
       </UserInfo>
-
+      
       {changingPassword === user.id ? (
         <PasswordContainer>
           <Input
@@ -118,7 +116,7 @@ const UserManagement: React.FC<UserManagementProps> = ({ style }) => {
               title="Cancelar"
               onPress={() => {
                 setChangingPassword(null);
-                setNewPassword("");
+                setNewPassword('');
               }}
               buttonStyle={[styles.cancelButton]}
               titleStyle={styles.buttonText}
@@ -149,30 +147,64 @@ const UserManagement: React.FC<UserManagementProps> = ({ style }) => {
     <Container style={style}>
       <SectionTitle>Gerenciar Usuários</SectionTitle>
       <SubTitle>Total: {users.length} usuários</SubTitle>
-
-      {users.map(renderUser)}
+      
+      <UsersListContainer>
+        {users.map(renderUser)}
+        
+        {onSignOut && (
+          <LogoutButtonContainer>
+            <Button
+              title="Sair"
+              onPress={onSignOut}
+              buttonStyle={styles.logoutButton}
+              titleStyle={styles.buttonText}
+            />
+          </LogoutButtonContainer>
+        )}
+      </UsersListContainer>
+      
+      <BottomSpacer />
     </Container>
   );
 };
 
-// STYLED COMPONENTS - Layout otimizado
-
 const Container = styled.View`
   flex: 1;
-  padding: 16px;
+  padding: 20px;
+  padding-top: 10px;
+  padding-bottom: 0px;
+`;
+
+const UsersListContainer = styled.View`
+  flex: 1;
+  margin-bottom: 20px;
+  margin-top: 10px;
+`;
+
+const BottomSpacer = styled.View`
+  height: 80px;
 `;
 
 const SectionTitle = styled.Text`
-  font-size: 20px;
+  font-size: 22px;
   font-weight: bold;
   color: ${theme.colors.primary};
-  margin-bottom: 8px;
+  margin-bottom: 12px;
+  margin-top: 20px;
+  z-index: 10;
+  background-color: ${theme.colors.background};
+  padding: 8px 0px;
 `;
 
 const SubTitle = styled.Text`
-  font-size: 14px;
+  font-size: 16px;
   color: ${theme.colors.secondary};
-  margin-bottom: 16px;
+  margin-bottom: 20px;
+  margin-top: 5px;
+  z-index: 10;
+  background-color: ${theme.colors.background};
+  padding: 4px 0px;
+  font-weight: 500;
 `;
 
 const UserContainer = styled.View`
@@ -210,7 +242,7 @@ const UserRole = styled.Text<StyledProps>`
   font-weight: bold;
   color: ${(props: StyledProps) => getRoleColor(props.role)};
   text-transform: uppercase;
-  background-color: ${(props: StyledProps) => getRoleColor(props.role) + "20"};
+  background-color: ${(props: StyledProps) => getRoleColor(props.role) + '20'};
   padding: 4px 8px;
   border-radius: 12px;
   align-self: flex-start;
@@ -236,6 +268,15 @@ const LoadingText = styled.Text`
   margin-top: 40px;
 `;
 
+const LogoutButtonContainer = styled.View`
+  margin-top: 30px;
+  margin-bottom: 20px;
+  padding-top: 20px;
+  border-top-width: 2px;
+  border-top-color: ${theme.colors.border};
+  background-color: ${theme.colors.background};
+`;
+
 const styles = {
   passwordInput: {
     marginBottom: 12,
@@ -259,8 +300,14 @@ const styles = {
   } as ViewStyle,
   buttonText: {
     fontSize: 14,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   } as TextStyle,
+  logoutButton: {
+    backgroundColor: theme.colors.error,
+    borderRadius: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 30,
+  } as ViewStyle,
 };
 
 export default UserManagement;
