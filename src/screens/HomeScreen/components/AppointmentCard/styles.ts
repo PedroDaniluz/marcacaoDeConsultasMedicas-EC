@@ -1,6 +1,6 @@
-import styled from "styled-components/native";
-import { TouchableOpacity } from "react-native";
-import theme from "../../../../styles/theme";
+import styled from 'styled-components/native';
+import { TouchableOpacity } from 'react-native';
+import theme from '../../../../styles/theme';
 
 export const Container = styled.View`
   background-color: ${theme.colors.white};
@@ -9,6 +9,11 @@ export const Container = styled.View`
   margin-bottom: ${theme.spacing.medium}px;
   flex-direction: row;
   align-items: center;
+  elevation: 2;
+  shadow-color: #000;
+  shadow-opacity: 0.1;
+  shadow-radius: 4px;
+  shadow-offset: 0px 2px;
 `;
 
 export const DoctorImage = styled.Image`
@@ -50,8 +55,8 @@ export const Description = styled.Text`
 
 export const Status = styled.Text<{ status: string }>`
   font-size: ${theme.typography.body.fontSize}px;
-  color: ${(props: { status: string }) =>
-    props.status === "pending" ? theme.colors.error : theme.colors.success};
+  color: ${(props: { status: string }) => 
+    props.status === 'pending' ? theme.colors.error : theme.colors.success};
   margin-top: 4px;
   font-weight: bold;
 `;
