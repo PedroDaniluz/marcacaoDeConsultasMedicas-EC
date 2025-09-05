@@ -1,9 +1,9 @@
-import React from "react";
-import { TouchableOpacity } from "react-native";
-import { Icon } from "react-native-elements";
-import { Appointment } from "../../../../types/appointments";
-import { User } from "../../../../types/auth";
-import theme from "../../../../styles/theme";
+import React from 'react';
+import { TouchableOpacity } from 'react-native';
+import { Icon } from 'react-native-elements';
+import { Appointment } from '../../../../types/appointments';
+import { User } from '../../../../types/auth';
+import theme from '../../../../styles/theme';
 import {
   Container,
   DoctorImage,
@@ -14,8 +14,8 @@ import {
   Description,
   Status,
   ActionButtons,
-  ActionButton,
-} from "./styles";
+  ActionButton
+} from './styles';
 
 interface AppointmentCardProps {
   appointment: Appointment;
@@ -28,7 +28,7 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({
   appointment,
   doctor,
   onEdit,
-  onDelete,
+  onDelete
 }) => {
   const handleEdit = () => {
     onEdit?.(appointment);
@@ -39,24 +39,28 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({
   };
 
   const getDoctorSpecialty = (): string => {
-    if (doctor?.role === "doctor" && "specialty" in doctor) {
+    if (doctor?.role === 'doctor' && 'specialty' in doctor) {
       return doctor.specialty;
     }
-    return "Especialidade não encontrada";
+    return 'Especialidade não encontrada';
   };
 
   const getStatusText = (status: string): string => {
-    return status === "pending" ? "Pendente" : "Confirmado";
+    return status === 'pending' ? 'Pendente' : 'Confirmado';
   };
 
   return (
     <Container>
-      <DoctorImage
-        source={{ uri: doctor?.image || "https://via.placeholder.com/100" }}
+      <DoctorImage 
+        source={{ uri: doctor?.image || 'https://via.placeholder.com/100' }} 
       />
       <InfoContainer>
-        <DoctorName>{doctor?.name || "Médico não encontrado"}</DoctorName>
-        <DoctorSpecialty>{getDoctorSpecialty()}</DoctorSpecialty>
+        <DoctorName>
+          {doctor?.name || 'Médico não encontrado'}
+        </DoctorName>
+        <DoctorSpecialty>
+          {getDoctorSpecialty()}
+        </DoctorSpecialty>
         <DateTime>
           {new Date(appointment.date).toLocaleDateString()} - {appointment.time}
         </DateTime>
@@ -66,19 +70,19 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({
         </Status>
         <ActionButtons>
           <ActionButton onPress={handleEdit}>
-            <Icon
-              name="edit"
-              type="material"
-              size={20}
-              color={theme.colors.primary}
+            <Icon 
+              name="edit" 
+              type="material" 
+              size={20} 
+              color={theme.colors.primary} 
             />
           </ActionButton>
           <ActionButton onPress={handleDelete}>
-            <Icon
-              name="delete"
-              type="material"
-              size={20}
-              color={theme.colors.error}
+            <Icon 
+              name="delete" 
+              type="material" 
+              size={20} 
+              color={theme.colors.error} 
             />
           </ActionButton>
         </ActionButtons>
