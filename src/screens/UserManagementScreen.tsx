@@ -1,86 +1,89 @@
-import React, { useState } from 'react';
-import styled from 'styled-components/native';
-import { ScrollView, ViewStyle, TextStyle } from 'react-native';
-import { Button, ListItem, Text } from 'react-native-elements';
-import { useAuth } from '../contexts/AuthContext';
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useFocusEffect } from '@react-navigation/native';
-import { RootStackParamList } from '../types/navigation';
-import theme from '../styles/theme';
-import Header from '../components/Header';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useState } from 'react'
+import styled from 'styled-components/native'
+import { ScrollView, ViewStyle, TextStyle } from 'react-native'
+import { Button, ListItem } from 'react-native-elements'
+import { useAuth } from '../contexts/AuthContext'
+import { useNavigation } from '@react-navigation/native'
+import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import { useFocusEffect } from '@react-navigation/native'
+import { RootStackParamList } from '../types/navigation'
+import theme from '../styles/theme'
+import Header from '../components/Header'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 type UserManagementScreenProps = {
-  navigation: NativeStackNavigationProp<RootStackParamList, 'UserManagement'>;
-};
+  navigation: NativeStackNavigationProp<RootStackParamList, 'UserManagement'>
+}
 
 interface User {
-  id: string;
-  name: string;
-  email: string;
-  role: 'admin' | 'doctor' | 'patient';
+  id: string
+  name: string
+  email: string
+  role: 'admin' | 'doctor' | 'patient'
 }
 
 interface StyledProps {
-  role: string;
+  role: string
 }
 
 const UserManagementScreen: React.FC = () => {
-  const { user } = useAuth();
-  const navigation = useNavigation<UserManagementScreenProps['navigation']>();
-  const [users, setUsers] = useState<User[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { user } = useAuth()
+  const navigation = useNavigation<UserManagementScreenProps['navigation']>()
+  const [users, setUsers] = useState<User[]>([])
+  const [loading, setLoading] = useState(true)
 
   const loadUsers = async () => {
     try {
-      const storedUsers = await AsyncStorage.getItem('@MedicalApp:users');
+      const storedUsers = await AsyncStorage.getItem('@MedicalApp:users')
       if (storedUsers) {
-        const allUsers: User[] = JSON.parse(storedUsers);
+        const allUsers: User[] = JSON.parse(storedUsers)
         // Filtra o usuário atual da lista
-        const filteredUsers = allUsers.filter(u => u.id !== user?.id);
-        setUsers(filteredUsers);
+        const filteredUsers = allUsers.filter((u) => u.id !== user?.id)
+        setUsers(filteredUsers)
       }
     } catch (error) {
-      console.error('Erro ao carregar usuários:', error);
+      console.error('Erro ao carregar usuários:', error)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   const handleDeleteUser = async (userId: string) => {
     try {
-      const storedUsers = await AsyncStorage.getItem('@MedicalApp:users');
+      const storedUsers = await AsyncStorage.getItem('@MedicalApp:users')
       if (storedUsers) {
-        const allUsers: User[] = JSON.parse(storedUsers);
-        const updatedUsers = allUsers.filter(u => u.id !== userId);
-        await AsyncStorage.setItem('@MedicalApp:users', JSON.stringify(updatedUsers));
-        loadUsers(); // Recarrega a lista
+        const allUsers: User[] = JSON.parse(storedUsers)
+        const updatedUsers = allUsers.filter((u) => u.id !== userId)
+        await AsyncStorage.setItem(
+          '@MedicalApp:users',
+          JSON.stringify(updatedUsers)
+        )
+        loadUsers() // Recarrega a lista
       }
     } catch (error) {
-      console.error('Erro ao deletar usuário:', error);
+      console.error('Erro ao deletar usuário:', error)
     }
-  };
+  }
 
   // Carrega os usuários quando a tela estiver em foco
   useFocusEffect(
     React.useCallback(() => {
-      loadUsers();
+      loadUsers()
     }, [])
-  );
+  )
 
   const getRoleText = (role: string) => {
     switch (role) {
       case 'admin':
-        return 'Administrador';
+        return 'Administrador'
       case 'doctor':
-        return 'Médico';
+        return 'Médico'
       case 'patient':
-        return 'Paciente';
+        return 'Paciente'
       default:
-        return role;
+        return role
     }
-  };
+  }
 
   return (
     <Container>
@@ -110,9 +113,7 @@ const UserManagementScreen: React.FC = () => {
                   {user.email}
                 </ListItem.Subtitle>
                 <RoleBadge role={user.role}>
-                  <RoleText role={user.role}>
-                    {getRoleText(user.role)}
-                  </RoleText>
+                  <RoleText role={user.role}>{getRoleText(user.role)}</RoleText>
                 </RoleBadge>
                 <ButtonContainer>
                   <Button
@@ -141,8 +142,8 @@ const UserManagementScreen: React.FC = () => {
         />
       </ScrollView>
     </Container>
-  );
-};
+  )
+}
 
 const styles = {
   scrollContent: {
@@ -182,12 +183,12 @@ const styles = {
     color: theme.colors.text,
     marginTop: 4,
   },
-};
+}
 
 const Container = styled.View`
   flex: 1;
   background-color: ${theme.colors.background};
-`;
+`
 
 const Title = styled.Text`
   font-size: 24px;
@@ -195,7 +196,7 @@ const Title = styled.Text`
   color: ${theme.colors.text};
   margin-bottom: 20px;
   text-align: center;
-`;
+`
 
 const UserCard = styled(ListItem)`
   background-color: ${theme.colors.background};
@@ -204,58 +205,58 @@ const UserCard = styled(ListItem)`
   padding: 15px;
   border-width: 1px;
   border-color: ${theme.colors.border};
-`;
+`
 
 const LoadingText = styled.Text`
   text-align: center;
   color: ${theme.colors.text};
   font-size: 16px;
   margin-top: 20px;
-`;
+`
 
 const EmptyText = styled.Text`
   text-align: center;
   color: ${theme.colors.text};
   font-size: 16px;
   margin-top: 20px;
-`;
+`
 
 const RoleBadge = styled.View<StyledProps>`
   background-color: ${(props: StyledProps) => {
     switch (props.role) {
       case 'admin':
-        return theme.colors.primary + '20';
+        return theme.colors.primary + '20'
       case 'doctor':
-        return theme.colors.success + '20';
+        return theme.colors.success + '20'
       default:
-        return theme.colors.secondary + '20';
+        return theme.colors.secondary + '20'
     }
   }};
   padding: 4px 8px;
   border-radius: 4px;
   align-self: flex-start;
   margin-top: 8px;
-`;
+`
 
 const RoleText = styled.Text<StyledProps>`
   color: ${(props: StyledProps) => {
     switch (props.role) {
       case 'admin':
-        return theme.colors.primary;
+        return theme.colors.primary
       case 'doctor':
-        return theme.colors.success;
+        return theme.colors.success
       default:
-        return theme.colors.secondary;
+        return theme.colors.secondary
     }
   }};
   font-size: 12px;
   font-weight: 500;
-`;
+`
 
 const ButtonContainer = styled.View`
   flex-direction: row;
   justify-content: space-between;
   margin-top: 8px;
-`;
+`
 
-export default UserManagementScreen; 
+export default UserManagementScreen

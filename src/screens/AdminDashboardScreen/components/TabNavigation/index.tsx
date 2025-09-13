@@ -1,11 +1,11 @@
-import React from 'react';
-import { Icon } from 'react-native-elements';
-import theme from '../../../../styles/theme';
-import { Container, TabButton, TabText, TabIcon } from './styles';
+import React from 'react'
+import { Icon } from 'react-native-elements'
+import theme from '../../../../styles/theme'
+import { Container, TabButton, TabText, TabIcon } from './styles'
 
 /**
  * Componente de navegação por abas
- * 
+ *
  * Este componente demonstra:
  * - Navegação intuitiva entre seções
  * - Estados visuais claros (ativo/inativo)
@@ -13,18 +13,18 @@ import { Container, TabButton, TabText, TabIcon } from './styles';
  * - Callback pattern para comunicação com componente pai
  */
 
-export type TabType = 'appointments' | 'users';
+export type TabType = 'appointments' | 'users'
 
 interface Tab {
-  id: TabType;
-  label: string;
-  icon: string;
-  iconType?: string;
+  id: TabType
+  label: string
+  icon: string
+  iconType?: string
 }
 
 interface TabNavigationProps {
-  activeTab: TabType;
-  onTabChange: (tab: TabType) => void;
+  activeTab: TabType
+  onTabChange: (tab: TabType) => void
 }
 
 const tabs: Tab[] = [
@@ -32,23 +32,23 @@ const tabs: Tab[] = [
     id: 'appointments',
     label: 'Consultas',
     icon: 'calendar-today',
-    iconType: 'material'
+    iconType: 'material',
   },
   {
     id: 'users',
     label: 'Usuários',
     icon: 'people',
-    iconType: 'material'
-  }
-];
+    iconType: 'material',
+  },
+]
 
 const TabNavigation: React.FC<TabNavigationProps> = ({
   activeTab,
-  onTabChange
+  onTabChange,
 }) => {
   return (
     <Container>
-      {tabs.map(tab => (
+      {tabs.map((tab) => (
         <TabButton
           key={tab.id}
           active={activeTab === tab.id}
@@ -62,13 +62,11 @@ const TabNavigation: React.FC<TabNavigationProps> = ({
               color={activeTab === tab.id ? '#fff' : theme.colors.text}
             />
           </TabIcon>
-          <TabText active={activeTab === tab.id}>
-            {tab.label}
-          </TabText>
+          <TabText active={activeTab === tab.id}>{tab.label}</TabText>
         </TabButton>
       ))}
     </Container>
-  );
-};
+  )
+}
 
-export default TabNavigation;
+export default TabNavigation

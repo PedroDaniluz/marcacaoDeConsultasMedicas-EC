@@ -1,8 +1,8 @@
-import React from "react";
-import { Input, Button, Text } from "react-native-elements";
-import { ViewStyle } from "react-native";
-import { Container, ErrorText, styles, Title } from "./styles";
-import { useLoginScreen } from "./hooks/useLoginScreen";
+import React from 'react'
+import { Input, Button, Text } from 'react-native-elements'
+import { ViewStyle } from 'react-native'
+import { Container, ErrorText, styles, Title } from './styles'
+import { useLoginScreen } from './hooks/useLoginScreen'
 
 const LoginScreen: React.FC = () => {
   const {
@@ -16,19 +16,19 @@ const LoginScreen: React.FC = () => {
     setLoading,
     error,
     setError,
-  } = useLoginScreen();
+  } = useLoginScreen()
 
   const handleLogin = async () => {
     try {
-      setLoading(true);
-      setError("");
-      await signIn({ email, password });
-    } catch (err) {
-      setError("Email ou senha inválidos");
+      setLoading(true)
+      setError('')
+      await signIn({ email, password })
+    } catch {
+      setError('Email ou senha inválidos')
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   return (
     <Container>
@@ -63,7 +63,7 @@ const LoginScreen: React.FC = () => {
 
       <Button
         title="Cadastrar Novo Usuário"
-        onPress={() => navigation.navigate("Register")}
+        onPress={() => navigation.navigate('Register')}
         containerStyle={styles.registerButton as ViewStyle}
         buttonStyle={styles.registerButtonStyle}
       />
@@ -72,7 +72,7 @@ const LoginScreen: React.FC = () => {
         Primeiro acesso? Cadastre-se como Admin ou Paciente.
       </Text>
     </Container>
-  );
-};
+  )
+}
 
-export default LoginScreen;
+export default LoginScreen

@@ -1,41 +1,41 @@
-import { apiClient, API_ENDPOINTS } from './api';
+import { apiClient, API_ENDPOINTS } from './api'
 
 /**
  * Interface para a consulta retornada pela API
  */
 interface ApiAppointment {
-  id: number;
-  dataHora: string;
-  especialidade: string;
-  usuarioId: number;
-  medicoId: number;
-  observacao: string;
-  status: 'AGENDADA' | 'CONFIRMADA' | 'CANCELADA' | 'REALIZADA';
+  id: number
+  dataHora: string
+  especialidade: string
+  usuarioId: number
+  medicoId: number
+  observacao: string
+  status: 'AGENDADA' | 'CONFIRMADA' | 'CANCELADA' | 'REALIZADA'
 }
 
 /**
  * Interface para a consulta usada no frontend
  */
 export interface Appointment {
-  id: string;
-  date: string;
-  time: string;
-  specialty: string;
-  patientId: string;
-  doctorId: string;
-  notes: string;
-  status: 'scheduled' | 'confirmed' | 'cancelled' | 'completed';
+  id: string
+  date: string
+  time: string
+  specialty: string
+  patientId: string
+  doctorId: string
+  notes: string
+  status: 'scheduled' | 'confirmed' | 'cancelled' | 'completed'
 }
 
 /**
  * Interface para criar uma nova consulta
  */
 export interface CreateAppointmentData {
-  dataHora: string;
-  especialidade: string;
-  usuarioId: number;
-  medicoId: number;
-  observacao: string;
+  dataHora: string
+  especialidade: string
+  usuarioId: number
+  medicoId: number
+  observacao: string
 }
 
 /**
@@ -53,11 +53,11 @@ export const appointmentsApiService = {
           ...data,
           status: 'AGENDADA',
         }
-      );
-      return this.mapApiAppointmentToAppointment(appointment);
+      )
+      return this.mapApiAppointmentToAppointment(appointment)
     } catch (error) {
-      console.error('Erro ao criar consulta:', error);
-      throw new Error('Erro ao agendar consulta');
+      console.error('Erro ao criar consulta:', error)
+      throw new Error('Erro ao agendar consulta')
     }
   },
 
@@ -68,11 +68,11 @@ export const appointmentsApiService = {
     try {
       const appointment = await apiClient.get<ApiAppointment>(
         `${API_ENDPOINTS.APPOINTMENTS}/${id}`
-      );
-      return this.mapApiAppointmentToAppointment(appointment);
+      )
+      return this.mapApiAppointmentToAppointment(appointment)
     } catch (error) {
-      console.error('Erro ao buscar consulta:', error);
-      throw new Error('Erro ao carregar consulta');
+      console.error('Erro ao buscar consulta:', error)
+      throw new Error('Erro ao carregar consulta')
     }
   },
 
@@ -81,10 +81,10 @@ export const appointmentsApiService = {
    */
   async cancelAppointment(id: string): Promise<void> {
     try {
-      await apiClient.delete(`${API_ENDPOINTS.APPOINTMENTS}/${id}`);
+      await apiClient.delete(`${API_ENDPOINTS.APPOINTMENTS}/${id}`)
     } catch (error) {
-      console.error('Erro ao cancelar consulta:', error);
-      throw new Error('Erro ao cancelar consulta');
+      console.error('Erro ao cancelar consulta:', error)
+      throw new Error('Erro ao cancelar consulta')
     }
   },
 
@@ -93,27 +93,27 @@ export const appointmentsApiService = {
    */
   mapApiAppointmentToAppointment(apiAppointment: ApiAppointment): Appointment {
     // Divide data e hora
-    const dateTime = new Date(apiAppointment.dataHora);
-    const date = dateTime.toISOString().split('T')[0];
-    const time = dateTime.toTimeString().slice(0, 5);
+    const dateTime = new Date(apiAppointment.dataHora)
+    const date = dateTime.toISOString().split('T')[0]
+    const time = dateTime.toTimeString().slice(0, 5)
 
     // Mapeia o status
-    let status: Appointment['status'];
+    let status: Appointment['status']
     switch (apiAppointment.status) {
       case 'AGENDADA':
-        status = 'scheduled';
-        break;
+        status = 'scheduled'
+        break
       case 'CONFIRMADA':
-        status = 'confirmed';
-        break;
+        status = 'confirmed'
+        break
       case 'CANCELADA':
-        status = 'cancelled';
-        break;
+        status = 'cancelled'
+        break
       case 'REALIZADA':
-        status = 'completed';
-        break;
+        status = 'completed'
+        break
       default:
-        status = 'scheduled';
+        status = 'scheduled'
     }
 
     return {
@@ -125,24 +125,22 @@ export const appointmentsApiService = {
       doctorId: apiAppointment.medicoId.toString(),
       notes: apiAppointment.observacao,
       status,
-    };
+    }
   },
 
   /**
    * Mapeia dados do frontend para o formato da API
    */
-  mapAppointmentDataToApi(
-    data: {
-      date: string;
-      time: string;
-      specialty: string;
-      patientId: string;
-      doctorId: string;
-      notes: string;
-    }
-  ): CreateAppointmentData {
+  mapAppointmentDataToApi(data: {
+    date: string
+    time: string
+    specialty: string
+    patientId: string
+    doctorId: string
+    notes: string
+  }): CreateAppointmentData {
     // Combina data e hora
-    const dateTime = `${data.date}T${data.time}:00`;
+    const dateTime = `${data.date}T${data.time}:00`
 
     return {
       dataHora: dateTime,
@@ -150,6 +148,6 @@ export const appointmentsApiService = {
       usuarioId: parseInt(data.patientId),
       medicoId: parseInt(data.doctorId),
       observacao: data.notes,
-    };
+    }
   },
-};
+}

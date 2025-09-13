@@ -1,14 +1,14 @@
-import React from "react";
-import { ScrollView, ViewStyle } from "react-native";
-import { Button, Input } from "react-native-elements";
-import Header from "../../components/Header";
-import DoctorList from "../../components/DoctorList";
-import TimeSlotList from "../../components/TimeSlotList";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Appointment } from "./types";
-import { Container, ErrorText, SectionTitle, styles, Title } from "./styles";
-import { useCreateAppointmentScreen } from "./hooks/useCreateAppointmentScreen";
-import { convertUsersToDoctors } from "./utils/convertToDoctors";
+import React from 'react'
+import { ScrollView, ViewStyle } from 'react-native'
+import { Button, Input } from 'react-native-elements'
+import Header from '../../components/Header'
+import DoctorList from '../../components/DoctorList'
+import TimeSlotList from '../../components/TimeSlotList'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import { Appointment } from './types'
+import { Container, ErrorText, SectionTitle, styles, Title } from './styles'
+import { useCreateAppointmentScreen } from './hooks/useCreateAppointmentScreen'
+import { convertUsersToDoctors } from './utils/convertToDoctors'
 
 const CreateAppointmentScreen: React.FC = () => {
   const {
@@ -26,56 +26,56 @@ const CreateAppointmentScreen: React.FC = () => {
     setError,
     doctors,
     loadingDoctors,
-  } = useCreateAppointmentScreen();
+  } = useCreateAppointmentScreen()
 
   const handleCreateAppointment = async () => {
     try {
-      setLoading(true);
-      setError("");
+      setLoading(true)
+      setError('')
 
       if (!date || !selectedTime || !selectedDoctor) {
-        setError("Por favor, preencha a data e selecione um médico e horário");
-        return;
+        setError('Por favor, preencha a data e selecione um médico e horário')
+        return
       }
 
       // Recupera consultas existentes
       const storedAppointments = await AsyncStorage.getItem(
-        "@MedicalApp:appointments"
-      );
+        '@MedicalApp:appointments'
+      )
       const appointments: Appointment[] = storedAppointments
         ? JSON.parse(storedAppointments)
-        : [];
+        : []
 
       // Cria nova consulta
       const newAppointment: Appointment = {
         id: Date.now().toString(),
-        patientId: user?.id || "",
-        patientName: user?.name || "",
+        patientId: user?.id || '',
+        patientName: user?.name || '',
         doctorId: selectedDoctor.id,
         doctorName: selectedDoctor.name,
         date,
         time: selectedTime,
         specialty: selectedDoctor.specialty,
-        status: "pending",
-      };
+        status: 'pending',
+      }
 
       // Adiciona nova consulta à lista
-      appointments.push(newAppointment);
+      appointments.push(newAppointment)
 
       // Salva lista atualizada
       await AsyncStorage.setItem(
-        "@MedicalApp:appointments",
+        '@MedicalApp:appointments',
         JSON.stringify(appointments)
-      );
+      )
 
-      alert("Consulta agendada com sucesso!");
-      navigation.goBack();
-    } catch (err) {
-      setError("Erro ao agendar consulta. Tente novamente.");
+      alert('Consulta agendada com sucesso!')
+      navigation.goBack()
+    } catch {
+      setError('Erro ao agendar consulta. Tente novamente.')
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   return (
     <Container>
@@ -126,7 +126,7 @@ const CreateAppointmentScreen: React.FC = () => {
         />
       </ScrollView>
     </Container>
-  );
-};
+  )
+}
 
-export default CreateAppointmentScreen;
+export default CreateAppointmentScreen

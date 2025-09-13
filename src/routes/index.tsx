@@ -1,9 +1,9 @@
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import HomeScreen from '../screens/HomeScreen';
-import CreateAppointmentScreen from '../screens/CreateAppointmentScreen';
-import ProfileScreen from '../screens/ProfileScreen';
+import { createNativeStackNavigator } from '@react-navigation/native-stack'
+import HomeScreen from '../screens/HomeScreen'
+import CreateAppointmentScreen from '../screens/CreateAppointmentScreen'
+import ProfileScreen from '../screens/ProfileScreen'
 
-const Stack = createNativeStackNavigator();
+const Stack = createNativeStackNavigator()
 
 export default function AppRoutes() {
   return (
@@ -14,8 +14,11 @@ export default function AppRoutes() {
       }}
     >
       <Stack.Screen name="Home" component={HomeScreen} />
-      <Stack.Screen name="CreateAppointment" component={CreateAppointmentScreen} />
+      <Stack.Screen
+        name="CreateAppointment"
+        component={CreateAppointmentScreen}
+      />
       <Stack.Screen name="Profile" component={ProfileScreen} />
     </Stack.Navigator>
-  );
+  )
 }

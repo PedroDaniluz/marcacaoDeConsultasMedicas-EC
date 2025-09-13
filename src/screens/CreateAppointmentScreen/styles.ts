@@ -1,5 +1,5 @@
-import styled from "styled-components/native";
-import theme from "../../styles/theme";
+import styled from 'styled-components/native'
+import theme from '../../styles/theme'
 
 export const styles = {
   scrollContent: {
@@ -20,12 +20,12 @@ export const styles = {
     backgroundColor: theme.colors.secondary,
     paddingVertical: 12,
   },
-};
+}
 
 export const Container = styled.View`
   flex: 1;
   background-color: ${theme.colors.background};
-`;
+`
 
 export const Title = styled.Text`
   font-size: 24px;
@@ -33,7 +33,7 @@ export const Title = styled.Text`
   color: ${theme.colors.text};
   margin-bottom: 20px;
   text-align: center;
-`;
+`
 
 export const SectionTitle = styled.Text`
   font-size: 18px;
@@ -41,10 +41,10 @@ export const SectionTitle = styled.Text`
   color: ${theme.colors.text};
   margin-bottom: 10px;
   margin-top: 10px;
-`;
+`
 
 export const ErrorText = styled.Text`
   color: ${theme.colors.error};
   text-align: center;
   margin-bottom: 10px;
-`;
+`

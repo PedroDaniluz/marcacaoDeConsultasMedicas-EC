@@ -1,7 +1,11 @@
-import React from 'react';
-import { Alert } from 'react-native';
-import { Appointment } from '../../hooks/useAdminDashboard';
-import { AppointmentStatus, getStatusText, canUpdateStatus } from '../../utils/statusHelpers';
+import React from 'react'
+import { Alert } from 'react-native'
+import { Appointment } from '../../hooks/useAdminDashboard'
+import {
+  AppointmentStatus,
+  getStatusText,
+  canUpdateStatus,
+} from '../../utils/statusHelpers'
 import {
   Container,
   Header,
@@ -13,12 +17,12 @@ import {
   StatusText,
   ActionContainer,
   ActionButton,
-  ActionButtonText
-} from './styles';
+  ActionButtonText,
+} from './styles'
 
 /**
  * Componente para exibir informações de uma consulta
- * 
+ *
  * Este componente demonstra:
  * - Componente especializado e reutilizável
  * - Uso de utilitários para lógica de negócio
@@ -27,17 +31,17 @@ import {
  */
 
 interface AppointmentCardProps {
-  appointment: Appointment;
-  onStatusUpdate: (id: string, status: AppointmentStatus) => Promise<void>;
+  appointment: Appointment
+  onStatusUpdate: (id: string, status: AppointmentStatus) => Promise<void>
 }
 
 const AppointmentCard: React.FC<AppointmentCardProps> = ({
   appointment,
-  onStatusUpdate
+  onStatusUpdate,
 }) => {
   const handleStatusUpdate = (newStatus: AppointmentStatus) => {
-    const actionText = newStatus === 'confirmed' ? 'confirmar' : 'cancelar';
-    
+    const actionText = newStatus === 'confirmed' ? 'confirmar' : 'cancelar'
+
     Alert.alert(
       'Confirmar Ação',
       `Deseja realmente ${actionText} esta consulta?`,
@@ -47,25 +51,28 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({
           text: 'Confirmar',
           onPress: async () => {
             try {
-              await onStatusUpdate(appointment.id, newStatus);
-            } catch (error) {
-              Alert.alert('Erro', 'Não foi possível atualizar o status da consulta');
+              await onStatusUpdate(appointment.id, newStatus)
+            } catch {
+              Alert.alert(
+                'Erro',
+                'Não foi possível atualizar o status da consulta'
+              )
             }
-          }
-        }
+          },
+        },
       ]
-    );
-  };
+    )
+  }
 
   const formatDate = (dateString: string): string => {
-    const date = new Date(dateString);
+    const date = new Date(dateString)
     return date.toLocaleDateString('pt-BR', {
       weekday: 'short',
       day: '2-digit',
       month: 'short',
-      year: 'numeric'
-    });
-  };
+      year: 'numeric',
+    })
+  }
 
   return (
     <Container>
@@ -77,7 +84,7 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({
             {formatDate(appointment.date)} às {appointment.time}
           </DateTime>
         </DoctorInfo>
-        
+
         <StatusBadge status={appointment.status}>
           <StatusText status={appointment.status}>
             {getStatusText(appointment.status)}
@@ -93,7 +100,7 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({
           >
             <ActionButtonText>Confirmar</ActionButtonText>
           </ActionButton>
-          
+
           <ActionButton
             variant="cancel"
             onPress={() => handleStatusUpdate('cancelled')}
@@ -103,7 +110,7 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({
         </ActionContainer>
       )}
     </Container>
-  );
-};
+  )
+}
 
-export default AppointmentCard;
+export default AppointmentCard

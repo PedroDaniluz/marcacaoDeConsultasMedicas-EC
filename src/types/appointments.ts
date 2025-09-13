@@ -13,10 +13,10 @@
  * @property status - Status atual da consulta (agendada, realizada, cancelada)
  */
 export type Appointment = {
-  id: string;
-  doctorId: string;
-  date: string;
-  time: string;
-  description: string;
-  status: string;
-}; 
+  id: string
+  doctorId: string
+  date: string
+  time: string
+  description: string
+  status: string
+}

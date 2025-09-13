@@ -1,21 +1,21 @@
-import React from 'react';
-import styled from 'styled-components/native';
-import { ViewStyle } from 'react-native';
-import { ListItem, Avatar } from 'react-native-elements';
-import theme from '../styles/theme';
+import React from 'react'
+import styled from 'styled-components/native'
+import { ViewStyle } from 'react-native'
+import { ListItem, Avatar } from 'react-native-elements'
+import theme from '../styles/theme'
 
 interface Doctor {
-  id: string;
-  name: string;
-  specialty: string;
-  image: string;
+  id: string
+  name: string
+  specialty: string
+  image: string
 }
 
 interface DoctorListProps {
-  doctors: Doctor[];
-  onSelectDoctor: (doctor: Doctor) => void;
-  selectedDoctorId?: string;
-  style?: ViewStyle;
+  doctors: Doctor[]
+  onSelectDoctor: (doctor: Doctor) => void
+  selectedDoctorId?: string
+  style?: ViewStyle
 }
 
 const DoctorList: React.FC<DoctorListProps> = ({
@@ -51,8 +51,8 @@ const DoctorList: React.FC<DoctorListProps> = ({
         </ListItem>
       ))}
     </Container>
-  );
-};
+  )
+}
 
 const styles = {
   listItem: {
@@ -79,10 +79,10 @@ const styles = {
     color: theme.colors.text,
     opacity: 0.7,
   },
-};
+}
 
 const Container = styled.View`
   margin-bottom: 15px;
-`;
+`
 
-export default DoctorList; 
+export default DoctorList
